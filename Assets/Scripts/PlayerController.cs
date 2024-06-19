@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    float verticalInput;
     float horizontalInput;
     [SerializeField] float speed = 10f;
     Rigidbody rb;
@@ -90,12 +89,18 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator ResetGame() {
         yield return new WaitForSeconds(3f);
+        
+        // Reset Throw Energy
         energy = 0;
-        pinSpawner.ClearOldPins();
+        
+        // Reset Ball
         transform.position = startingPosition;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         ballInHand = true;
+
+        // Reset Pins
+        pinSpawner.ClearOldPins();
         pinSpawner.SpawnPins();
     }
 }
