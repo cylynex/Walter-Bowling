@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour {
     float horizontalInput;
     [SerializeField] float speed = 10f;
     Rigidbody rb;
+    PinSpawner pinSpawner;
+
     [SerializeField] GameObject pointer;
     [SerializeField] float timer = 0f;
     [SerializeField] float foulTime = 10f;
@@ -27,6 +29,8 @@ public class PlayerController : MonoBehaviour {
     private void Start() {
         rb = GetComponent<Rigidbody>();
         startingPosition = transform.position;
+        pinSpawner = FindObjectOfType<PinSpawner>();
+        pinSpawner.SpawnPins();
     }
 
     private void Update() {
@@ -79,29 +83,19 @@ public class PlayerController : MonoBehaviour {
         ballInHand = false;
         rb.AddForce(Vector3.forward * energy, ForceMode.Impulse);
     }
-
-    void CheckLimits() {
-        if (transform.position.z < minZ) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, minZ);
-        }
-
-        if (transform.position.z > maxZ) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ);
-        }
-    }
-
-    void GetControls() {
-        verticalInput = Input.GetAxis("Vertical");
-        horizontalInput = Input.GetAxis("Horizontal");
-
-        rb.AddForce(Vector3.forward * speed * verticalInput);
-        rb.AddForce(Vector3.right * speed * horizontalInput);
-    }
-
+    
     public void ResetPlayer() {
+        StartCoroutine(ResetGame());
+    }
+
+    IEnumerator ResetGame() {
+        yield return new WaitForSeconds(3f);
+        energy = 0;
+        pinSpawner.ClearOldPins();
         transform.position = startingPosition;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         ballInHand = true;
+        pinSpawner.SpawnPins();
     }
 }
